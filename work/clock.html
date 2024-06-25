@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ja" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>とけい</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+</head>
+
+<body>
+    <h1>10分前行動時計</h1>
+    <h2 id="clock">時計</h2>
+    <h3>天気情報 (天気予報 API（livedoor 天気互換）から取得)</h3>
+    <div id="weather"></div>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+
+            let hours = now.getHours();
+            let minutes = now.getMinutes() + 10;
+            let hours_now = now.getHours();
+            let minutes_now = now.getMinutes();
+            const seconds = now.getSeconds();
+
+            if (minutes >= 60) {
+                minutes -= 60;
+                hours += 1;
+                if (hours >= 24) {
+                    hours = 0;
+                }
+            }
+
+            const displayHours = hours.toString().padStart(2, "0");
+            const displayMinutes = minutes.toString().padStart(2, "0");
+
+            const displayHours_now = hours_now.toString().padStart(2, "0");
+            const displayMinutes_now = minutes_now.toString().padStart(2, "0");
+
+            const displaySeconds = seconds.toString().padStart(2, "0");
+
+            const clockElement = document.getElementById("clock");
+            const clock2Element = document.getElementById("clock2");
+            clockElement.innerHTML = `${displayHours}時${displayMinutes}分${displaySeconds}秒<br>
+            (現在の時間${displayHours_now}時${displayMinutes_now}分${displaySeconds}秒)`;
+            setTimeout(updateClock, 1000);
+        }
+        updateClock();
+
+
+        // API URL
+        const apiUrl = 'https://weather.tsukumijima.net/api/forecast/city/400010';
+
+        // fetchを使用してAPIからデータを取得
+        fetch(apiUrl)
+            .then(response => {
+                // レスポンスが正常か確認
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); // JSON形式に変換
+            })
+            .then(data => {
+                // 取得したデータを処理
+                console.log(data);
+                const weatherElement = document.querySelector("#weather");
+
+                const today = data.forecasts[0];
+                const tomorrow = data.forecasts[1];
+
+                weatherElement.innerHTML = `
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>日付</th>
+                                <th>天気</th>
+                                <th>最高気温</th>
+                                <th>最低気温</th>
+                                <th>降水確率 (00-06時)</th>
+                                <th>降水確率 (06-12時)</th>
+                                <th>降水確率 (12-18時)</th>
+                                <th>降水確率 (18-24時)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>${today.dateLabel}</td>
+                                <td>${today.telop}</td>
+                                <td>${today.temperature.max.celsius !== null ? today.temperature.max.celsius + '℃' : '情報なし'}</td>
+                                <td>${today.temperature.min.celsius !== null ? today.temperature.min.celsius + '℃' : '情報なし'}</td>
+                                <td>${today.chanceOfRain.T00_06}</td>
+                                <td>${today.chanceOfRain.T06_12}</td>
+                                <td>${today.chanceOfRain.T12_18}</td>
+                                <td>${today.chanceOfRain.T18_24}</td>
+                            </tr>
+                            <tr>
+                                <td>${tomorrow.dateLabel}</td>
+                                <td>${tomorrow.telop}</td>
+                                <td>${tomorrow.temperature.max.celsius}℃</td>
+                                <td>${tomorrow.temperature.min.celsius}℃</td>
+                                <td>${tomorrow.chanceOfRain.T00_06}</td>
+                                <td>${tomorrow.chanceOfRain.T06_12}</td>
+                                <td>${tomorrow.chanceOfRain.T12_18}</td>
+                                <td>${tomorrow.chanceOfRain.T18_24}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                `;
+            })
+            .catch(error => {
+                // エラーハンドリング
+                console.error('There has been a problem with your fetch operation:', error);
+            });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+</body>
+
+</html>
