@@ -1,0 +1,20 @@
+body{
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex-flow: column;
+    background: radial-gradient(ellipse at center,#0a2e38 0%,#000000 70%);
+    font-family: 'Share Tech Mono',monospace;
+    color: #daf6ff;
+    text-shadow: 0 0 20px #0aafe6;
+    line-height: 1.2;
+}
+#calendar{
+    font-size: 30px;
+}
+#clock{
+    font-size: 100px;
+    margin-top: 100;
+}

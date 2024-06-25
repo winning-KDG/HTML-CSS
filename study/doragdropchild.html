@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D&D</title>
+    <style>
+        #RCV {
+            width: 300px;
+            height: 300px;
+            background-color: #f00;
+        }
+
+        #SRC {
+            width: 150px;
+            height: 80px;
+            background-color: #aaa;
+        }
+    </style>
+    <script>
+        // ドキュメント読み込み完了時の初期処理（イベントを感知させる）
+        function init() {
+            const RCV = document.getElementById("RCV");
+            RCV.addEventListener("dragover", DOVER, true);
+            RCV.addEventListener("drop", DRP, true);
+        }
+
+        // ドロップされたと処理（evtはイベントオブジェクト）
+        function DOVER(evt) {
+            evt.preventDefault();
+        }
+
+        // メッセージを表示
+        function DRP(evt) {
+            evt.preventDefault();
+            const IDN = evt.dataTransfer.getData("text");
+            const OBJ = document.getElementById(IDN);
+
+            evt.currentTarget.appendChild(OBJ);
+        }
+
+        function DRS(evt) {
+            evt.dataTransfer.setData("text", evt.target.id);
+        }
+    </script>
+</head>
+
+<body onload="init()">
+    <img id="IM" src="asset/images/sakura.jpg" width="150" ondragstart="DRS(event)">
+    <div id="SRC" draggable="true" ondragstart="DRS(event)">あいうえお</div>
+    <p>下の四角に<span draggable="true" id="SPM" ondragstart="DRS(event)">ドロップ</span>してください</p>
+    <div id="RCV">
+        <img id="DST" width="150">
+    </div>
+
+</body>
+
+</html>
